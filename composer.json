@@ -1,0 +1,55 @@
+{
+    "name": "spinen/halo-php-client",
+    "description": "SPINEN's PHP Client for Halo.",
+    "keywords": [
+        "halo",
+        "client",
+        "laravel",
+        "spinen"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jimmy Puckett",
+            "email": "jimmy.puckett@spinen.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "ext-json": "*",
+        "guzzlehttp/guzzle": "^7.0",
+        "laravel/framework": "^9.19|^10",
+        "nesbot/carbon": "^2.62.1"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.4",
+        "mockery/mockery": "^1.5.1",
+        "phpunit/phpunit": "^10",
+        "psy/psysh": "^0.11.1",
+        "scrutinizer/ocular": "^1.9",
+        "squizlabs/php_codesniffer": "^3.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spinen\\Halo\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Spinen\\Halo\\Providers\\ClientServiceProvider",
+                "Spinen\\Halo\\Providers\\ServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
