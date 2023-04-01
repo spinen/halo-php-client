@@ -1,7 +1,7 @@
-/vendor
-/node_modules
-phpunit.xml
+/.phpunit.cache
 /build
+/vendor
 .env
 .phpunit.result.cache
 composer.lock
+phpunit.xml
