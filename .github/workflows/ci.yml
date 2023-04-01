@@ -45,7 +45,7 @@ jobs:
         if: ${{ matrix.stability == 'prefer-stable' }}
 
       - name: Execute tests
-        run: vendor/bin/phpunit --coverage-clover=coverage.clover --verbose
+        run: vendor/bin/phpunit --coverage-clover=coverage.clover
 
       - name: Upload Code Coverage
         run: vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover

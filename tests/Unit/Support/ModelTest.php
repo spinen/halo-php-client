@@ -775,7 +775,7 @@ class ModelTest extends TestCase
         $this->model->saveOrFail();
     }
 
-    public function castToDatetimeValuesProvider()
+    public static function castToDatetimeValuesProvider()
     {
         $carbon = Carbon::now();
         $datetime = new DateTime();
