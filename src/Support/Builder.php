@@ -377,6 +377,16 @@ class Builder
     }
 
     /**
+     * Shortcut to where count
+     *
+     * @throws InvalidRelationshipException
+     */
+    public function take(int|string $count): self
+    {
+        return $this->where('count', (int)$count);
+    }
+
+    /**
      * Add property to filter the collection
      *
      * @throws InvalidRelationshipException
