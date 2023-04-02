@@ -207,12 +207,14 @@ class BuilderTest extends TestCase
      */
     public function it_get_only_specified_properties()
     {
-        $this->markTestSkipped();
-
         $this->client_mock->shouldReceive('request')
             ->once()
             ->withAnyArgs()
             ->andReturn($this->team_response);
+
+        $this->client_mock->shouldReceive('setDebug')
+            ->with(false)
+            ->andReturnSelf();
 
         $results = $this->builder->setClass(Team::class)
             ->get(['color']);
@@ -275,8 +277,6 @@ class BuilderTest extends TestCase
      */
     public function it_peels_off_single_response_keys()
     {
-        $this->markTestSkipped();
-
         $this->client_mock->shouldReceive('request')
             ->once()
             ->withAnyArgs()
@@ -287,6 +287,10 @@ class BuilderTest extends TestCase
                     ],
                 ]
             );
+
+        $this->client_mock->shouldReceive('setDebug')
+            ->with(false)
+            ->andReturnSelf();
 
         $results = $this->builder->setClass(Team::class)
             ->get();
@@ -300,8 +304,6 @@ class BuilderTest extends TestCase
      */
     public function it_peels_off_collection_response_keys()
     {
-        $this->markTestSkipped();
-
         $this->client_mock->shouldReceive('request')
             ->once()
             ->withAnyArgs()
@@ -317,6 +319,10 @@ class BuilderTest extends TestCase
                     ],
                 ]
             );
+
+        $this->client_mock->shouldReceive('setDebug')
+            ->with(false)
+            ->andReturnSelf();
 
         $results = $this->builder->setClass(Team::class)
             ->get();

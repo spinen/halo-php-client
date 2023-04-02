@@ -112,9 +112,10 @@ class Opportunity extends Model
         'targetdate' => 'datetime',
     ];
 
-    // TODO: This is wrapped up under "tickets"
-    // "record_count" => 5,
-    // "tickets" => [  here  ]
+    /**
+     * Some of the responses have the data under a property
+     */
+    protected ?string $responseKey = 'tickets';
 
     /**
      * Path to API endpoint.

@@ -16,9 +16,10 @@ class WebhookEvent extends Model
      */
     protected $casts = [];
 
-    // TODO: This is wrapped up under "events"
-    // "record_count" => 5,
-    // "events" => [  here  ]
+    /**
+     * Some of the responses have the data under a property
+     */
+    protected ?string $responseKey = 'events';
 
     /**
      * Path to API endpoint.
