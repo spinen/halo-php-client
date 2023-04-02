@@ -243,7 +243,7 @@ class Builder
      */
     public function find(int|string $id, array|string $properties = ['*']): Model
     {
-        return $this->where($this->getModel()->getKeyName(), $id)
+        return $this->whereId($id)
             ->get($properties)
             ->first();
     }
