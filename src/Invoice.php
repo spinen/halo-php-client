@@ -94,6 +94,18 @@ class Invoice extends Model
     ];
 
     /**
+     * Parameter for order by direction
+     *
+     * Default is "$orderByParameter . 'desc'"
+     */
+    protected ?string $orderByDirectionParameter = 'order';
+
+    /**
+     * Parameter for order by column
+     */
+    protected string $orderByParameter = 'orderby';
+
+    /**
      * Path to API endpoint.
      */
     protected string $path = '/invoice';

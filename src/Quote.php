@@ -70,6 +70,11 @@ class Quote extends Model
     ];
 
     /**
+     * Parameter for order by column
+     */
+    protected string $orderByParameter = 'orderby';
+
+    /**
      * Path to API endpoint.
      */
     protected string $path = '/quotation';
