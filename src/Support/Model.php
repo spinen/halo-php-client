@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\JsonEncodingException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Conditionable;
 use JsonSerializable;
 use LogicException;
 use Spinen\Halo\Concerns\HasClient;
@@ -36,10 +37,13 @@ use Spinen\Halo\Support\Relations\Relation;
  */
 abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
 {
+    use Conditionable;
     use HasAttributes {
         asDateTime as originalAsDateTime;
     }
-    use HasClient, HasTimestamps, HidesAttributes;
+    use HasClient;
+    use HasTimestamps;
+    use HidesAttributes;
 
     /**
      * Indicates if the model exists.
@@ -64,6 +68,18 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      * keep the specific model nested.
      */
     protected bool $nested = false;
+
+    /**
+     * Parameter for order by direction
+     *
+     * Default is "$orderByParameter . 'desc'"
+     */
+    protected ?string $orderByDirectionParameter = null;
+
+    /**
+     * Parameter for order by column
+     */
+    protected string $orderByParameter = 'order';
 
     /**
      * Optional parentModel instance
@@ -328,6 +344,22 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
     public function getKeyType(): string
     {
         return $this->keyType;
+    }
+
+    /**
+     * Get the parameter the endpoint uses to sort.
+     */
+    public function getOrderByDirectionParameter(): string
+    {
+        return $this->orderByDirectionParameter ?? $this->getOrderByParameter() . 'desc';
+    }
+
+    /**
+     * Get the parameter the endpoint uses to sort.
+     */
+    public function getOrderByParameter(): string
+    {
+        return $this->orderByParameter;
     }
 
     /**

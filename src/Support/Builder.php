@@ -291,6 +291,28 @@ class Builder
     }
 
     /**
+     * Shortcut to where order & orderby with expected parameter
+     *
+     * The Halo API is not consistent in the parameter used to orderby
+     *
+     * @throws InvalidRelationshipException
+     */
+    public function orderBy(string $column, string $direction = 'asc'): self
+    {
+        return $this->where($this->getModel()->getOrderByParameter(), $column)
+            ->where($this->getModel()->getOrderByDirectionParameter(), $direction !== 'asc');
+    }
+
+    /**
+     * Shortcut to where order with direction set to desc
+     *
+     * @throws InvalidRelationshipException
+     */
+    public function orderByDesc(string $column): self
+    {
+        return $this->orderBy($column, 'desc');
+    }
+    /**
      * Peel of the wrapping property if it exist.
      *
      * @throws InvalidRelationshipException
