@@ -6,6 +6,8 @@ use BadMethodCallException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as LaravelCollection;
+use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Conditionable;
 use Spinen\Halo\Action;
 use Spinen\Halo\Agent;
 use Spinen\Halo\Appointment;
@@ -46,6 +48,7 @@ use Spinen\Halo\WebhookEvent;
  */
 class Builder
 {
+    use Conditionable;
     use HasClient;
 
     /**
@@ -115,6 +118,11 @@ class Builder
     {
         if (! isset($this->parentModel) && array_key_exists($name, $this->rootModels)) {
             return $this->newInstanceForModel($this->rootModels[$name]);
+        }
+
+        // Alias search or search_anything or searchAnything to where(search|search_anything, for)
+        if (Str::startsWith($name, 'search')) {
+            return $this->where(...array_merge([Str::of($name)->snake()->toString()], $arguments));
         }
 
         throw new BadMethodCallException(sprintf('Call to undefined method [%s]', $name));
