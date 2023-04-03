@@ -278,6 +278,18 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
     }
 
     /**
+     * Convert boolean to a string as their API expects "true"/"false
+     */
+    protected function convertBoolToString(mixed $value): mixed
+    {
+        return match(true) {
+            is_array($value) => array_map([$this, 'convertBoolToString'], $value),
+            is_bool($value) => $value ? 'true' : 'false',
+            default => $value,
+        };
+    }
+
+    /**
      * Delete the model from Halo
      *
      * @throws NoClientException
@@ -386,9 +398,8 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
             $path .= '/'.ltrim($extra, '/');
         }
 
-        // Convert query to querystring format and put on the end
         if (! empty($query)) {
-            $path .= '?'.http_build_query($query);
+            $path .= '?'.http_build_query($this->convertBoolToString($query));
         }
 
         // If there is a parentModel & not have an id (unless for nested), then prepend parentModel

@@ -320,6 +320,43 @@ class Builder
     {
         return $this->orderBy($column, 'desc');
     }
+
+    /**
+     * Shortcut to where page_no
+     *
+     * @throws InvalidRelationshipException
+     */
+    public function page(int|string $number, int|string|null $size = null): self
+    {
+        return $this->where('page_no', (int)$number)
+            ->unless(
+                // Will be in string format
+                $this->wheres['pageinate'] ?? 'false',
+                fn(self $b): self => $b->paginate($size)
+            );
+    }
+
+    /**
+     * Shortcut to paginate for UK spelling
+     *
+     * @throws InvalidRelationshipException
+     */
+    public function pageinate(int|string|null $size): self
+    {
+        return $this->paginate($size);
+    }
+
+    /**
+     * Shortcut to where pageinate
+     *
+     * @throws InvalidRelationshipException
+     */
+    public function paginate(int|string|null $size = null): self
+    {
+        return $this->where('pageinate', true)
+            ->when($size, fn(self $b): self => $b->where('page_size', (int)$size));
+    }
+
     /**
      * Peel of the wrapping property if it exist.
      *
