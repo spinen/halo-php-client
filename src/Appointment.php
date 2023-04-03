@@ -16,9 +16,7 @@ class Appointment extends Model
      *
      * @var array
      */
-    protected $casts = [
-        // 'datecreated' => 'datetime:Uv',
-    ];
+    protected $casts = [];
 
     /**
      * Path to API endpoint.

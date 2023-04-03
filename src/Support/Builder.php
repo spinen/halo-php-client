@@ -257,6 +257,16 @@ class Builder
     }
 
     /**
+     * Order newest to oldest
+     */
+    public function latest(?string $column = null): self
+    {
+        $column ??= $this->getModel()->getCreatedAtColumn();
+
+        return $column ? $this->orderByDesc($column) : $this;
+    }
+
+    /**
      * Shortcut to where count
      *
      * @throws InvalidRelationshipException
@@ -306,6 +316,16 @@ class Builder
     {
         return $this->newInstance()
             ->setClass($model);
+    }
+
+    /**
+     * Order oldest to newest
+     */
+    public function oldest(?string $column = null): self
+    {
+        $column ??= $this->getModel()->getCreatedAtColumn();
+
+        return $column ? $this->orderBy($column) : $this;
     }
 
     /**

@@ -98,6 +98,20 @@ use Spinen\Halo\Support\Model;
 class Opportunity extends Model
 {
     /**
+     * The name of the "created at" column.
+     *
+     * @var string
+     */
+    const CREATED_AT = 'dateoccurred';
+
+    /**
+     * The name of the "updated at" column.
+     *
+     * @var string
+     */
+    const UPDATED_AT = 'lastactiondate';
+
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array
