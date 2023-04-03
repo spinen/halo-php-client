@@ -257,6 +257,16 @@ class Builder
     }
 
     /**
+     * Shortcut to where count
+     *
+     * @throws InvalidRelationshipException
+     */
+    public function limit(int|string $count): self
+    {
+        return $this->where('count', (int)$count);
+    }
+
+    /**
      * New up a class instance, but not saved
      *
      * @throws InvalidRelationshipException
@@ -329,11 +339,7 @@ class Builder
     public function page(int|string $number, int|string|null $size = null): self
     {
         return $this->where('page_no', (int)$number)
-            ->unless(
-                // Will be in string format
-                $this->wheres['pageinate'] ?? 'false',
-                fn(self $b): self => $b->paginate($size)
-            );
+            ->when($size, fn(self $b): self => $b->paginate($size));
     }
 
     /**
@@ -414,13 +420,13 @@ class Builder
     }
 
     /**
-     * Shortcut to where count
+     * Shortcut to limit
      *
      * @throws InvalidRelationshipException
      */
     public function take(int|string $count): self
     {
-        return $this->where('count', (int)$count);
+        return $this->limit($count);
     }
 
     /**
