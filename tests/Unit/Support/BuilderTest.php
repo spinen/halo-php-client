@@ -3,6 +3,7 @@
 namespace Tests\Unit\Support;
 
 use BadMethodCallException;
+use Illuminate\Support\Str;
 use Mockery;
 use Mockery\Mock;
 use Spinen\Halo\Action;
@@ -12,7 +13,6 @@ use Spinen\Halo\Exceptions\InvalidRelationshipException;
 use Spinen\Halo\Exceptions\ModelNotFoundException;
 use Spinen\Halo\Quote;
 use Spinen\Halo\Report;
-use Spinen\Halo\Space;
 use Spinen\Halo\Supplier;
 use Spinen\Halo\Support\Builder;
 use Spinen\Halo\Support\Collection;
@@ -94,29 +94,29 @@ class BuilderTest extends TestCase
     public static function rootModels()
     {
         return [
-        'actions' => ['model' => 'actions'],
-        'agents' => ['model' => 'agents'],
-        'appointments' => ['model' => 'appointments'],
-        'articles' => ['model' => 'articles'],
-        'assets' => ['model' => 'assets'],
-        'attachments' => ['model' => 'attachments'],
-        'clients' => ['model' => 'clients'],
-        'contracts' => ['model' => 'contracts'],
-        'invoices' => ['model' => 'invoices'],
-        'items' => ['model' => 'items'],
-        'opportunities' => ['model' => 'opportunities'],
-        'projects' => ['model' => 'projects'],
-        'quotes' => ['model' => 'quotes'],
-        'reports' => ['model' => 'reports'],
-        'sites' => ['model' => 'sites'],
-        'statuses' => ['model' => 'statuses'],
-        'suppliers' => ['model' => 'suppliers'],
-        'teams' => ['model' => 'teams'],
-        'tickets' => ['model' => 'tickets'],
-        'ticket_types' => ['model' => 'ticket_types'],
-        'users' => ['model' => 'users'],
-        'webhooks' => ['model' => 'webhooks'],
-        'webhook_events' => ['model' => 'webhook_events'],
+            'actions' => ['model' => 'actions'],
+            'agents' => ['model' => 'agents'],
+            'appointments' => ['model' => 'appointments'],
+            'articles' => ['model' => 'articles'],
+            'assets' => ['model' => 'assets'],
+            'attachments' => ['model' => 'attachments'],
+            'clients' => ['model' => 'clients'],
+            'contracts' => ['model' => 'contracts'],
+            'invoices' => ['model' => 'invoices'],
+            'items' => ['model' => 'items'],
+            'opportunities' => ['model' => 'opportunities'],
+            'projects' => ['model' => 'projects'],
+            'quotes' => ['model' => 'quotes'],
+            'reports' => ['model' => 'reports'],
+            'sites' => ['model' => 'sites'],
+            'statuses' => ['model' => 'statuses'],
+            'suppliers' => ['model' => 'suppliers'],
+            'teams' => ['model' => 'teams'],
+            'tickets' => ['model' => 'tickets'],
+            'ticket_types' => ['model' => 'ticket_types'],
+            'users' => ['model' => 'users'],
+            'webhooks' => ['model' => 'webhooks'],
+            'webhook_events' => ['model' => 'webhook_events'],
         ];
     }
 
@@ -355,49 +355,229 @@ class BuilderTest extends TestCase
 
     /**
      * @test
+     *
+     * @dataProvider filterProvider
      */
-    public function it_where_filters_to_request_as_query_string_parameters()
+    public function it_where_filters_to_request_as_query_string_parameters($class, $calls, $uri)
     {
-        $this->builder->setClass(Report::class);
+        $this->builder->setClass($class);
 
-        $this->builder->where('some', 'value');
+        Collection::wrap($calls)->each(fn ($call) => match (true) {
+            is_null($call['property']) && is_null($call['value']) => $this->builder->{$call['method']}(),
+            is_null($call['property']) => $this->builder->{$call['method']}($call['value']),
+            is_null($call['value']) => $this->builder->{$call['method']}($call['property']),
+            default => $this->builder->{$call['method']}($call['property'], $call['value']),
+        });
 
-        $this->assertEquals('/report?some=value', $this->builder->getPath(), 'simple');
+        $this->assertEquals($uri, $this->builder->getPath());
+    }
 
-        $this->builder->where('other', 'different');
-
-        $this->assertEquals('/report?some=value&other=different', $this->builder->getPath(), 'multiple');
-
-        $this->builder->where('array', collect(['one', 'two']));
-
-        $this->assertEquals(
-            '/report?some=value&other=different&array%5B0%5D=one&array%5B1%5D=two',
-            $this->builder->getPath(),
-            'collection'
-        );
-
-        $this->builder->where('boolean');
-
-        $this->assertEquals(
-            '/report?some=value&other=different&array%5B0%5D=one&array%5B1%5D=two&boolean=1',
-            $this->builder->getPath(),
-            'boolean'
-        );
-
-        $this->builder->whereNot('negative');
-
-        $this->assertEquals(
-            '/report?some=value&other=different&array%5B0%5D=one&array%5B1%5D=two&boolean=1&negative=0',
-            $this->builder->getPath(),
-            'where not'
-        );
-
-        $this->builder->whereId(1);
-
-        $this->assertEquals(
-            '/report/1?some=value&other=different&array%5B0%5D=one&array%5B1%5D=two&boolean=1&negative=0',
-            $this->builder->getPath(),
-            'id'
-        );
+    public static function filterProvider()
+    {
+        return [
+            'simple' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'where',
+                        'property' => $property = Str::random(),
+                        'value' => $value = Str::random(),
+                    ],
+                ],
+                'uri' => '/report?'.$property.'='.$value,
+            ],
+            'multiple' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'where',
+                        'property' => $property1 = Str::random(),
+                        'value' => $value1 = Str::random(),
+                    ],
+                    [
+                        'method' => 'where',
+                        'property' => $property2 = Str::random(),
+                        'value' => $value2 = Str::random(),
+                    ],
+                ],
+                'uri' => '/report?'.$property1.'='.$value1.'&'.$property2.'='.$value2,
+            ],
+            'array' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'where',
+                        'property' => $property = Str::random(),
+                        'value' => $value = collect([$one = Str::random(), $two = Str::random()]),
+                    ],
+                ],
+                'uri' => '/report?'.$property.'%5B0%5D='.$one.'&'.$property.'%5B1%5D='.$two,
+            ],
+            'null value' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'where',
+                        'property' => $property = Str::random(),
+                        'value' => null,
+                    ],
+                ],
+                'uri' => '/report?'.$property.'=true',
+            ],
+            'whereNot' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'whereNot',
+                        'property' => $property = Str::random(),
+                        'value' => null,
+                    ],
+                ],
+                'uri' => '/report?'.$property.'=false',
+            ],
+            'whereId' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'whereId',
+                        'property' => null,
+                        'value' => $value = random_int(20, 100),
+                    ],
+                ],
+                'uri' => '/report/'.$value,
+            ],
+            'limit' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'limit',
+                        'property' => null,
+                        'value' => $value = random_int(20, 100),
+                    ],
+                ],
+                'uri' => '/report?count='.$value,
+            ],
+            'take' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'take',
+                        'property' => null,
+                        'value' => $value = random_int(20, 100),
+                    ],
+                ],
+                'uri' => '/report?count='.$value,
+            ],
+            'latest' => [
+                'class' => Ticket::class,
+                'calls' => [
+                    [
+                        'method' => 'latest',
+                        'property' => null,
+                        'value' => null,
+                    ],
+                ],
+                'uri' => '/tickets?order=dateoccurred&orderdesc=true',
+            ],
+            'latest without created' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'latest',
+                        'property' => null,
+                        'value' => null,
+                    ],
+                ],
+                'uri' => '/report',
+            ],
+            'oldest' => [
+                'class' => Ticket::class,
+                'calls' => [
+                    [
+                        'method' => 'oldest',
+                        'property' => null,
+                        'value' => null,
+                    ],
+                ],
+                'uri' => '/tickets?order=dateoccurred&orderdesc=false',
+            ],
+            'oldest without created' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'oldest',
+                        'property' => null,
+                        'value' => null,
+                    ],
+                ],
+                'uri' => '/report',
+            ],
+            'page' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'page',
+                        'property' => $property = random_int(20, 100),
+                        'value' => null,
+                    ],
+                ],
+                'uri' => '/report?page_no='.$property,
+            ],
+            'page with pagination' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'page',
+                        'property' => $property = random_int(20, 100),
+                        'value' => $value = random_int(20, 100),
+                    ],
+                ],
+                'uri' => '/report?page_no='.$property.'&pageinate=true&page_size='.$value,
+            ],
+            'paginate' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'paginate',
+                        'property' => null,
+                        'value' => null,
+                    ],
+                ],
+                'uri' => '/report?pageinate=true',
+            ],
+            'paginate with size' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'paginate',
+                        'property' => $property = random_int(20, 100),
+                        'value' => null,
+                    ],
+                ],
+                'uri' => '/report?pageinate=true&page_size='.$property,
+            ],
+            'pageinate' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'pageinate',
+                        'property' => null,
+                        'value' => null,
+                    ],
+                ],
+                'uri' => '/report?pageinate=true',
+            ],
+            'pageinate with size' => [
+                'class' => Report::class,
+                'calls' => [
+                    [
+                        'method' => 'pageinate',
+                        'property' => $property = random_int(20, 100),
+                        'value' => null,
+                    ],
+                ],
+                'uri' => '/report?pageinate=true&page_size='.$property,
+            ],
+        ];
     }
 }

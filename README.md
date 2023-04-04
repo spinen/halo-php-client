@@ -31,7 +31,12 @@ We solely use [Laravel](https://www.laravel.com) for our applications, so this p
         * [Getting the Client object](#getting-the-client-object)
         * [Models](#models)
         * [Relationships](#relationships)
-        * [Advanced filtering using "where"](#advanced-filtering-using-where)
+        * [Collections](#collections)
+        * [Filtering using "where"](#filtering-using-where)
+        * [Search](#search)
+        * [Limit records returned](#limit-records-returned)
+        * [Order By](#order-by)
+        * [Pagination](#pagination)
     * [More Examples](#more-examples)
  * [Known Issues](#known-issues)
 
@@ -286,27 +291,36 @@ You may also call these relationships as attributes, and the Client will return 
 
 ```
 
-#### Advanced filtering using "where"
+#### Collections
 
-You can do advanced filters by using `where` on the models.
+Results are wrapped in a `Spinen\Halo\Support\Collection`, which extends `Illuminate\Support\Collection`, so you can use any of the collection helper methods documented  [Laravel Collection methods](https://laravel.com/docs/master/collections).
+
+#### Filtering using "where"
+
+You can do filters by using `where` on the models.  The first parameter is the property being filtered.  The second is optional, and is the value to filter the property.  If it is left null, then is it true, so it becomes `where('<property', true)`.  All of these values are passed in the query string.
+
+There are a few "helper" methods that are aliases to the `where` filter, to make the calls more expressive.
+
+* `whereId('<id>')` is an alias to `where('id', '<id>')`
+* `whereNot('<property>')` is an alias to `where('<property', false)`
+
+> NOTE: Halo's API need the string "true"/"false" for boolean values, which is automatically convert at time of building the query string.
 
 ```php
-> $user->halo()->clients->pluck('name')
-= Spinen\Halo\Support\Collection {#5003
-    all: [
-      "Acorn Construction",
-      "Freston Cakes and Bakes",
-      "Mario and Luigi's Pizza Place",
-      "Ron's Iron works",
-      "SPINEN",
-      "St Johns High School",
-      "Terry's Chocolates",
-      "Tony's Tyre Emporium",
-      "Unknown",
-    ],
-  }
 
-> $user->halo()->clients()->where('search', 'y')->get()->pluck('name')
+```
+
+#### Search
+
+There is a simple search that you can preform on the endpoints using the `search`.  There are some of the endpoints that allow searching specific fields, which you can access via `search_some_field('<for>')` or `searchSomeField('<for>')`.
+
+```php
+> $user->halo()->clients->count()
+= 9
+
+// Only clients with a "y" in the name
+> $user->halo()->clients()->search('y')->get()->pluck('name')
+// Same as: $user->halo()->clients()->where('search', 'y')->get()->pluck('name')
 = Spinen\Halo\Support\Collection {#5136
     all: [
       "Terry's Chocolates",
@@ -315,7 +329,83 @@ You can do advanced filters by using `where` on the models.
   }
 ```
 
-> NOTE: Review Halo's API documentation documentation for the property that you can filter on.
+#### Limit records returned
+
+You can call the `take` or `limit` methods (take is an alias to limit) on the builder to limit the records returned to the count parameter.
+
+```php
+> $builder->tickets()->take(7)->get()
+= Spinen\Halo\Support\Collection {#4999
+    all: [
+      Spinen\Halo\Ticket {#4991
+        +exists: true,
+        +incrementing: false,
+        +parentModel: null,
+        +wasRecentlyCreated: false,
+        +timestamps: false,
+      },
+      // more...
+    ],
+  }
+
+> $tickets->count()
+= 7
+```
+
+#### Order By
+
+You can order the results of the API by using the `orderBy` and `orderByDesc` methods.  Pass in the column you wish to order the results as the first parameter.  `orderByDesc('<column>')` is an alias to `orderBy('<column>', 'desc')`.  Additionally, you can use `latest` or `oldest` to apply `orderBy` or `orderByDesc` with the default of the column in the model that represents when the record was created.  You can pass a different column to either of the methods to override the default column.
+
+```php
+// Running through map to convert date to string
+> $builder->tickets()->take(5)->oldest()->get()->pluck('dateoccurred', 'id')->map(fn($d) => (string)$d)
+= Spinen\Halo\Support\Collection {#4983
+    all: [
+      1125 => "2019-12-14 13:30:00",
+      1128 => "2019-12-14 13:30:00",
+      1131 => "2019-12-14 13:30:00",
+      1134 => "2019-12-14 13:30:00",
+      1137 => "2019-12-14 13:30:00",
+    ],
+  }
+
+> $builder->tickets()->take(5)->latest()->get()->pluck('dateoccurred', 'id')->map(fn($d) => (string)$d)
+= Spinen\Halo\Support\Collection {#4763
+    all: [
+      2205 => "2021-03-24 11:35:40",
+      2206 => "2021-03-24 10:23:47",
+      2200 => "2021-03-23 16:44:00",
+      2186 => "2021-03-23 14:17:57",
+      2187 => "2021-03-23 14:17:57",
+    ],
+  }
+```
+
+> NOTE: The column to use for the `latest` is controlled by the `CREATED_AT` `const` on the models.
+
+#### Pagination
+
+Several of the endpoints support pagination.  You can use simple pagination by chaining `pagination` or `pageination` with an optional size value to the builder.  You can get a specific page with the `page` method that takes page number as a parameter.  You can condense the call by passing pagination size as the second parameter to the `page` method.
+
+```php
+// Could have been $builder->users()->paginate(2)->page(2)->get()
+> $builder->users()->page(3, 2)->get()
+= Spinen\Halo\Support\Collection {#4761
+    all: [
+      Spinen\Halo\User {#4763
+        +exists: true,
+        +incrementing: false,
+        +parentModel: null,
+        +wasRecentlyCreated: false,
+        +timestamps: false,
+      },
+      // more...
+    ],
+  }
+
+> $users->count()
+= 2
+```
 
 ### More Examples
 
@@ -351,5 +441,7 @@ $user->halo()->statuses->pluck('name', 'id')->sort()
 ## Open Items
 
 * Setup the relationships in the models
+* Add getters to models
+* Add scopes on models
 
 ## Known Issues

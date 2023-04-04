@@ -159,6 +159,20 @@ use Spinen\Halo\Support\Model;
 class Client extends Model
 {
     /**
+     * The name of the "created at" column.
+     *
+     * @var string
+     */
+    const CREATED_AT = 'datecreated';
+
+    /**
+     * The name of the "updated at" column.
+     *
+     * @var string
+     */
+    const UPDATED_AT = 'alastupdate';
+
+    /**
      * The float attributes
      *
      * @var array
