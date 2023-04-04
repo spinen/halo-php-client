@@ -98,6 +98,20 @@ use Spinen\Halo\Support\Model;
 class Opportunity extends Model
 {
     /**
+     * The name of the "created at" column.
+     *
+     * @var string
+     */
+    const CREATED_AT = 'dateoccurred';
+
+    /**
+     * The name of the "updated at" column.
+     *
+     * @var string
+     */
+    const UPDATED_AT = 'lastactiondate';
+
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array
@@ -112,9 +126,10 @@ class Opportunity extends Model
         'targetdate' => 'datetime',
     ];
 
-    // TODO: This is wrapped up under "tickets"
-    // "record_count" => 5,
-    // "tickets" => [  here  ]
+    /**
+     * Some of the responses have the data under a property
+     */
+    protected ?string $responseKey = 'tickets';
 
     /**
      * Path to API endpoint.

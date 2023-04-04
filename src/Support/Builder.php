@@ -6,6 +6,8 @@ use BadMethodCallException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as LaravelCollection;
+use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Conditionable;
 use Spinen\Halo\Action;
 use Spinen\Halo\Agent;
 use Spinen\Halo\Appointment;
@@ -38,14 +40,60 @@ use Spinen\Halo\WebhookEvent;
 /**
  * Class Builder
  *
+ * @property Collection $actions
+ * @property Collection $agents
+ * @property Collection $appointments
+ * @property Collection $articles
+ * @property Collection $assets
+ * @property Collection $attachments
  * @property Collection $clients
+ * @property Collection $contracts
+ * @property Collection $invoices
+ * @property Collection $items
+ * @property Collection $opportunities
+ * @property Collection $projects
+ * @property Collection $quotes
+ * @property Collection $reports
+ * @property Collection $sites
+ * @property Collection $statuses
+ * @property Collection $suppliers
+ * @property Collection $teams
+ * @property Collection $tickets
+ * @property Collection $ticket_types
+ * @property Collection $users
+ * @property Collection $webhooks
+ * @property Collection $webhook_events
  * @property Agent $agent
  * @property User $user
  *
- * @method clients
+ * @method self actions()
+ * @method self agents()
+ * @method self appointments()
+ * @method self articles()
+ * @method self assets()
+ * @method self attachments()
+ * @method self clients()
+ * @method self contracts()
+ * @method self invoices()
+ * @method self items()
+ * @method self opportunities()
+ * @method self projects()
+ * @method self quotes()
+ * @method self reports()
+ * @method self search($for)
+ * @method self sites()
+ * @method self statuses()
+ * @method self suppliers()
+ * @method self teams()
+ * @method self ticket_types()
+ * @method self tickets()
+ * @method self users()
+ * @method self webhook_events()
+ * @method self webhooks()
  */
 class Builder
 {
+    use Conditionable;
     use HasClient;
 
     /**
@@ -117,6 +165,11 @@ class Builder
             return $this->newInstanceForModel($this->rootModels[$name]);
         }
 
+        // Alias search or search_anything or searchAnything to where(search|search_anything, for)
+        if (Str::startsWith($name, 'search')) {
+            return $this->where(...array_merge([Str::of($name)->snake()->toString()], $arguments));
+        }
+
         throw new BadMethodCallException(sprintf('Call to undefined method [%s]', $name));
     }
 
@@ -131,7 +184,7 @@ class Builder
      */
     public function __get(string $name): Collection|Model|null
     {
-        return match(true) {
+        return match (true) {
             $name === 'agent' => $this->newInstanceForModel(Agent::class)
                 ->get(extra: 'me')
                 ->first(),
@@ -185,6 +238,8 @@ class Builder
         $response = $this->getClient()
             ->setDebug($this->debug)
             ->request($this->getPath($extra));
+
+        // TODO: Should we capture record_count?
 
         // Peel off the key if exist
         $response = $this->peelWrapperPropertyIfNeeded(Arr::wrap($response));
@@ -243,9 +298,29 @@ class Builder
      */
     public function find(int|string $id, array|string $properties = ['*']): Model
     {
-        return $this->where($this->getModel()->getKeyName(), $id)
+        return $this->whereId($id)
             ->get($properties)
             ->first();
+    }
+
+    /**
+     * Order newest to oldest
+     */
+    public function latest(?string $column = null): self
+    {
+        $column ??= $this->getModel()->getCreatedAtColumn();
+
+        return $column ? $this->orderByDesc($column) : $this;
+    }
+
+    /**
+     * Shortcut to where count
+     *
+     * @throws InvalidRelationshipException
+     */
+    public function limit(int|string $count): self
+    {
+        return $this->where('count', (int) $count);
     }
 
     /**
@@ -288,6 +363,71 @@ class Builder
     {
         return $this->newInstance()
             ->setClass($model);
+    }
+
+    /**
+     * Order oldest to newest
+     */
+    public function oldest(?string $column = null): self
+    {
+        $column ??= $this->getModel()->getCreatedAtColumn();
+
+        return $column ? $this->orderBy($column) : $this;
+    }
+
+    /**
+     * Shortcut to where order & orderby with expected parameter
+     *
+     * The Halo API is not consistent in the parameter used to orderby
+     *
+     * @throws InvalidRelationshipException
+     */
+    public function orderBy(string $column, string $direction = 'asc'): self
+    {
+        return $this->where($this->getModel()->getOrderByParameter(), $column)
+            ->where($this->getModel()->getOrderByDirectionParameter(), $direction !== 'asc');
+    }
+
+    /**
+     * Shortcut to where order with direction set to desc
+     *
+     * @throws InvalidRelationshipException
+     */
+    public function orderByDesc(string $column): self
+    {
+        return $this->orderBy($column, 'desc');
+    }
+
+    /**
+     * Shortcut to where page_no
+     *
+     * @throws InvalidRelationshipException
+     */
+    public function page(int|string $number, int|string|null $size = null): self
+    {
+        return $this->where('page_no', (int) $number)
+            ->when($size, fn (self $b): self => $b->paginate($size));
+    }
+
+    /**
+     * Shortcut to paginate for UK spelling
+     *
+     * @throws InvalidRelationshipException
+     */
+    public function pageinate(int|string|null $size = null): self
+    {
+        return $this->paginate($size);
+    }
+
+    /**
+     * Shortcut to where pageinate
+     *
+     * @throws InvalidRelationshipException
+     */
+    public function paginate(int|string|null $size = null): self
+    {
+        return $this->where('pageinate', true)
+            ->when($size, fn (self $b): self => $b->where('page_size', (int) $size));
     }
 
     /**
@@ -344,6 +484,16 @@ class Builder
         $this->parentModel = $parent;
 
         return $this;
+    }
+
+    /**
+     * Shortcut to limit
+     *
+     * @throws InvalidRelationshipException
+     */
+    public function take(int|string $count): self
+    {
+        return $this->limit($count);
     }
 
     /**

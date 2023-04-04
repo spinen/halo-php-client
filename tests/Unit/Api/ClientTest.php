@@ -310,7 +310,7 @@ class ClientTest extends TestCase
     {
         $client = new Client($this->configs);
 
-        if (!is_null($token)) {
+        if (! is_null($token)) {
             $client->setToken(is_callable($token) ? $token() : $token);
         }
 
@@ -344,14 +344,14 @@ class ClientTest extends TestCase
 
             'expired' => [
                 'valid' => false,
-                'token' => function() {
+                'token' => function () {
                     Carbon::setTestNow($now = Carbon::now()->subSeconds(2));
                     $token = new Token(access_token: Str::random(), expires_in: 1);
                     Carbon::setTestNow();
 
                     return $token;
                 },
-            ]
+            ],
         ];
     }
 

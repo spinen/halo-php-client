@@ -2,7 +2,6 @@
 
 namespace Spinen\Halo\Support;
 
-use Spinen\Halo\Support\Collection;
 use Tests\TestCase;
 
 /**

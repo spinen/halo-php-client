@@ -26,6 +26,20 @@ use Spinen\Halo\Support\Model;
 class Article extends Model
 {
     /**
+     * The name of the "created at" column.
+     *
+     * @var string
+     */
+    const CREATED_AT = 'date_created';
+
+    /**
+     * The name of the "updated at" column.
+     *
+     * @var string
+     */
+    const UPDATED_AT = 'date_edited';
+
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array

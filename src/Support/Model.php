@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\JsonEncodingException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Conditionable;
 use JsonSerializable;
 use LogicException;
 use Spinen\Halo\Concerns\HasClient;
@@ -36,10 +37,13 @@ use Spinen\Halo\Support\Relations\Relation;
  */
 abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
 {
+    use Conditionable;
     use HasAttributes {
         asDateTime as originalAsDateTime;
     }
-    use HasClient, HasTimestamps, HidesAttributes;
+    use HasClient;
+    use HasTimestamps;
+    use HidesAttributes;
 
     /**
      * Indicates if the model exists.
@@ -64,6 +68,18 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      * keep the specific model nested.
      */
     protected bool $nested = false;
+
+    /**
+     * Parameter for order by direction
+     *
+     * Default is "$orderByParameter . 'desc'"
+     */
+    protected ?string $orderByDirectionParameter = null;
+
+    /**
+     * Parameter for order by column
+     */
+    protected string $orderByParameter = 'order';
 
     /**
      * Optional parentModel instance
@@ -117,14 +133,14 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      *
      * @var string
      */
-    const CREATED_AT = 'created_at';
+    const CREATED_AT = null;
 
     /**
      * The name of the "updated at" column.
      *
      * @var string
      */
-    const UPDATED_AT = 'updated_at';
+    const UPDATED_AT = null;
 
     /**
      * Model constructor.
@@ -262,6 +278,18 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
     }
 
     /**
+     * Convert boolean to a string as their API expects "true"/"false
+     */
+    protected function convertBoolToString(mixed $value): mixed
+    {
+        return match (true) {
+            is_array($value) => array_map([$this, 'convertBoolToString'], $value),
+            is_bool($value) => $value ? 'true' : 'false',
+            default => $value,
+        };
+    }
+
+    /**
      * Delete the model from Halo
      *
      * @throws NoClientException
@@ -331,6 +359,22 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
     }
 
     /**
+     * Get the parameter the endpoint uses to sort.
+     */
+    public function getOrderByDirectionParameter(): string
+    {
+        return $this->orderByDirectionParameter ?? $this->getOrderByParameter().'desc';
+    }
+
+    /**
+     * Get the parameter the endpoint uses to sort.
+     */
+    public function getOrderByParameter(): string
+    {
+        return $this->orderByParameter;
+    }
+
+    /**
      * Build API path
      *
      * Put anything on the end of the URI that is passed in
@@ -354,9 +398,8 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
             $path .= '/'.ltrim($extra, '/');
         }
 
-        // Convert query to querystring format and put on the end
         if (! empty($query)) {
-            $path .= '?'.http_build_query($query);
+            $path .= '?'.http_build_query($this->convertBoolToString($query));
         }
 
         // If there is a parentModel & not have an id (unless for nested), then prepend parentModel

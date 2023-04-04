@@ -82,6 +82,13 @@ use Spinen\Halo\Support\Model;
 class Invoice extends Model
 {
     /**
+     * The name of the "created at" column.
+     *
+     * @var string
+     */
+    const CREATED_AT = 'invoice_date';
+
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array
@@ -92,6 +99,18 @@ class Invoice extends Model
         'invoice_date' => 'datetime',
         'schedule_date' => 'datetime',
     ];
+
+    /**
+     * Parameter for order by direction
+     *
+     * Default is "$orderByParameter . 'desc'"
+     */
+    protected ?string $orderByDirectionParameter = 'order';
+
+    /**
+     * Parameter for order by column
+     */
+    protected string $orderByParameter = 'orderby';
 
     /**
      * Path to API endpoint.

@@ -74,6 +74,11 @@ class Item extends Model
     protected $casts = [];
 
     /**
+     * Parameter for order by column
+     */
+    protected string $orderByParameter = 'orderby';
+
+    /**
      * Path to API endpoint.
      */
     protected string $path = '/item';

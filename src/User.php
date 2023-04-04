@@ -2,11 +2,7 @@
 
 namespace Spinen\Halo;
 
-use Spinen\Halo\Exceptions\InvalidRelationshipException;
-use Spinen\Halo\Exceptions\ModelNotFoundException;
-use Spinen\Halo\Exceptions\NoClientException;
 use Spinen\Halo\Support\Model;
-use Spinen\Halo\Support\Relations\ChildOf;
 
 /**
  * Class User

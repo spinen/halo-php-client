@@ -50,7 +50,7 @@ class TokenTest extends TestCase
             token_type: $token_type = Str::random(),
         );
 
-        $this->assertEquals("{$token_type} {$access_token}", (string)$token);
+        $this->assertEquals("{$token_type} {$access_token}", (string) $token);
     }
 
     /**
@@ -66,9 +66,9 @@ class TokenTest extends TestCase
             Str::random(),
         ];
 
-        $token = new Token(scope: implode(" ", $scopes));
+        $token = new Token(scope: implode(' ', $scopes));
 
-        foreach($scopes as $key => $scope) {
+        foreach ($scopes as $key => $scope) {
             $this->assertTrue($token->allowedScope($scope), "Token #{$key}");
         }
 
