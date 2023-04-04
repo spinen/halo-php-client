@@ -367,7 +367,7 @@ class Builder
      *
      * @throws InvalidRelationshipException
      */
-    public function pageinate(int|string|null $size): self
+    public function pageinate(int|string|null $size = null): self
     {
         return $this->paginate($size);
     }
