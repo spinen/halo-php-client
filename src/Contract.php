@@ -38,12 +38,12 @@ use Spinen\Halo\Support\Model;
  */
 class Contract extends Model
 {
-   /**
-    * The name of the "created at" column.
-    *
-    * @var string
-    */
-   const CREATED_AT = 'start_date';
+    /**
+     * The name of the "created at" column.
+     *
+     * @var string
+     */
+    const CREATED_AT = 'start_date';
 
     /**
      * The float attributes

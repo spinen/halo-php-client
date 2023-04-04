@@ -282,7 +282,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      */
     protected function convertBoolToString(mixed $value): mixed
     {
-        return match(true) {
+        return match (true) {
             is_array($value) => array_map([$this, 'convertBoolToString'], $value),
             is_bool($value) => $value ? 'true' : 'false',
             default => $value,
@@ -363,7 +363,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      */
     public function getOrderByDirectionParameter(): string
     {
-        return $this->orderByDirectionParameter ?? $this->getOrderByParameter() . 'desc';
+        return $this->orderByDirectionParameter ?? $this->getOrderByParameter().'desc';
     }
 
     /**
