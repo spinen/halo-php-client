@@ -40,11 +40,56 @@ use Spinen\Halo\WebhookEvent;
 /**
  * Class Builder
  *
+ * @property Collection $actions
+ * @property Collection $agents
+ * @property Collection $appointments
+ * @property Collection $articles
+ * @property Collection $assets
+ * @property Collection $attachments
  * @property Collection $clients
+ * @property Collection $contracts
+ * @property Collection $invoices
+ * @property Collection $items
+ * @property Collection $opportunities
+ * @property Collection $projects
+ * @property Collection $quotes
+ * @property Collection $reports
+ * @property Collection $sites
+ * @property Collection $statuses
+ * @property Collection $suppliers
+ * @property Collection $teams
+ * @property Collection $tickets
+ * @property Collection $ticket_types
+ * @property Collection $users
+ * @property Collection $webhooks
+ * @property Collection $webhook_events
  * @property Agent $agent
  * @property User $user
  *
- * @method clients
+ * @method self actions()
+ * @method self agents()
+ * @method self appointments()
+ * @method self articles()
+ * @method self assets()
+ * @method self attachments()
+ * @method self clients()
+ * @method self contracts()
+ * @method self invoices()
+ * @method self items()
+ * @method self opportunities()
+ * @method self projects()
+ * @method self quotes()
+ * @method self reports()
+ * @method self search($for)
+ * @method self sites()
+ * @method self statuses()
+ * @method self suppliers()
+ * @method self teams()
+ * @method self ticket_types()
+ * @method self tickets()
+ * @method self users()
+ * @method self webhook_events()
+ * @method self webhooks()
  */
 class Builder
 {
@@ -139,7 +184,7 @@ class Builder
      */
     public function __get(string $name): Collection|Model|null
     {
-        return match(true) {
+        return match (true) {
             $name === 'agent' => $this->newInstanceForModel(Agent::class)
                 ->get(extra: 'me')
                 ->first(),
@@ -193,6 +238,8 @@ class Builder
         $response = $this->getClient()
             ->setDebug($this->debug)
             ->request($this->getPath($extra));
+
+        // TODO: Should we capture record_count?
 
         // Peel off the key if exist
         $response = $this->peelWrapperPropertyIfNeeded(Arr::wrap($response));
@@ -273,7 +320,7 @@ class Builder
      */
     public function limit(int|string $count): self
     {
-        return $this->where('count', (int)$count);
+        return $this->where('count', (int) $count);
     }
 
     /**
@@ -358,8 +405,8 @@ class Builder
      */
     public function page(int|string $number, int|string|null $size = null): self
     {
-        return $this->where('page_no', (int)$number)
-            ->when($size, fn(self $b): self => $b->paginate($size));
+        return $this->where('page_no', (int) $number)
+            ->when($size, fn (self $b): self => $b->paginate($size));
     }
 
     /**
@@ -380,7 +427,7 @@ class Builder
     public function paginate(int|string|null $size = null): self
     {
         return $this->where('pageinate', true)
-            ->when($size, fn(self $b): self => $b->where('page_size', (int)$size));
+            ->when($size, fn (self $b): self => $b->where('page_size', (int) $size));
     }
 
     /**
