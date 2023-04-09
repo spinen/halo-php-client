@@ -46,6 +46,11 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
     use HidesAttributes;
 
     /**
+     * Default wheres to send.  They are overwrote by any matching where calls.
+     */
+    public array $defaultWheres = [];
+
+    /**
      * Indicates if the model exists.
      */
     public bool $exists = false;
@@ -327,6 +332,17 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
     }
 
     /**
+     * Merge any where in the defaultWheres property with any passed in.
+     */
+    public function getDefaultWheres(array $query = []): array
+    {
+        return [
+            ...$this->defaultWheres,
+            ...$query,
+        ];
+    }
+
+    /**
      * Get the value indicating whether the IDs are incrementing.
      */
     public function getIncrementing(): bool
@@ -398,7 +414,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
             $path .= '/'.ltrim($extra, '/');
         }
 
-        if (! empty($query)) {
+        if (! empty($query = $this->getDefaultWheres($query))) {
             $path .= '?'.http_build_query($this->convertBoolToString($query));
         }
 

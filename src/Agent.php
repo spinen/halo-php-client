@@ -124,6 +124,13 @@ class Agent extends Model
     ];
 
     /**
+     * Default wheres to send.  They are overwrote by any matching where calls.
+     */
+    public array $defaultWheres = [
+        'showall' => true,
+    ];
+
+    /**
      * Path to API endpoint.
      */
     protected string $path = '/agent';
