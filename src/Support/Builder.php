@@ -233,21 +233,32 @@ class Builder
     public function get(array|string $properties = ['*'], ?string $extra = null): Collection|Model
     {
         $properties = Arr::wrap($properties);
+        $count = null;
+        $page = null;
+        $pageSize = null;
 
         // Call API to get the response
         $response = $this->getClient()
             ->setDebug($this->debug)
             ->request($this->getPath($extra));
 
-        // TODO: Should we capture record_count?
+        if (
+            array_key_exists('record_count', $response) &&
+            array_key_exists('page_no', $response) &&
+            array_key_exists('page_size', $response)
+        ) {
+            $count = $response['record_count'];
+            $page = $response['page_no'];
+            $pageSize = $response['page_size'];
+        }
 
         // Peel off the key if exist
         $response = $this->peelWrapperPropertyIfNeeded(Arr::wrap($response));
 
         // Convert to a collection of filtered objects casted to the class
-        return (new Collection((array_values($response) === $response) ? $response : [$response]))->map(
+        return (new Collection((array_values($response) === $response) ? $response : [$response]))
             // Cast to class with only the requested, properties
-            fn ($items) => $this->getModel()
+            ->map(fn ($items) => $this->getModel()
                 ->newFromBuilder(
                     $properties === ['*']
                         ? (array) $items
@@ -255,8 +266,8 @@ class Builder
                             ->only($properties)
                             ->toArray()
                 )
-                ->setClient($this->getClient()->setDebug(false))
-        );
+                ->setClient($this->getClient()->setDebug(false)))
+            ->setPagination(count: $count, page: $page, pageSize: $pageSize);
     }
 
     /**
