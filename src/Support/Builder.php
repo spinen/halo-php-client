@@ -295,8 +295,11 @@ class Builder
      */
     public function getPath(?string $extra = null): ?string
     {
+        $w = (array)$this->wheres;
+        $id = Arr::pull($w, $this->getModel()->getKeyName());
+
         return $this->getModel()
-            ->getPath($extra, $this->wheres);
+            ->getPath($extra . (is_null($id) ? null : '/' . $id), $w);
     }
 
     /**
@@ -437,8 +440,8 @@ class Builder
      */
     public function paginate(int|string|null $size = null): self
     {
-        return $this->where('pageinate', true)
-            ->when($size, fn (self $b): self => $b->where('page_size', (int) $size));
+        return $this->unless($size, fn (self $b): self => $b->where('pageinate', false))
+            ->when($size, fn (self $b): self => $b->where('pageinate', true)->where('page_size', (int) $size));
     }
 
     /**
@@ -514,17 +517,9 @@ class Builder
      */
     public function where(string $property, $value = true): self
     {
-        $value = is_a($value, LaravelCollection::class) ? $value->toArray() : $value;
-
-        // If looking for a specific model, then set the id
-        if ($property === $this->getModel()->getKeyName()) {
-            // TODO: This is an issue when a model is "readonly" as you cannot set it
-            $this->getModel()->{$property} = $value;
-
-            return $this;
-        }
-
-        $this->wheres[$property] = $value;
+        $this->wheres[$property] = is_a($value, LaravelCollection::class)
+            ? $value->toArray()
+            : $value;
 
         return $this;
     }
