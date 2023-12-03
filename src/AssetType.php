@@ -8,14 +8,14 @@ use Spinen\Halo\Support\Model;
 /**
  * Class AssetType
  *
+ * @property array $bookingtypes
+ * @property array $fields
+ * @property array $xtype_roles
  * @property bool $allowall_status
  * @property bool $enableresourcebooking
  * @property bool $resourcebooking_allow_asset_selection
  * @property bool $show_to_users
  * @property bool $useteamviewer
- * @property Collection $bookingtypes
- * @property Collection $fields
- * @property Collection $xtype_roles
  * @property float $fiveyearlycost
  * @property float $fouryearlycost
  * @property float $monthlycost
@@ -72,13 +72,11 @@ class AssetType extends Model
         'allowall_status' => 'bool',
         'asset_details_tab_display' => 'int',
         'assetgroup_id' => 'int',
-        'bookingtypes' => 'collection',
         'businessowner_visibility' => 'int',
         'column_profile_id' => 'int',
         'defaultsequence' => 'int',
         'dependencies_visibility' => 'int',
         'enableresourcebooking' => 'bool',
-        'fields' => 'collection',
         'fiid' => 'int',
         'fiveyearlycost' => 'float',
         'fouryearlycost' => 'float',
@@ -109,7 +107,6 @@ class AssetType extends Model
         'useteamviewer' => 'bool',
         'visibility_level' => 'int',
         'weeklycost' => 'float',
-        'xtype_roles' => 'collection',
         'yearlycost' => 'float',
     ];
 
