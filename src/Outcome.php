@@ -2,12 +2,13 @@
 
 namespace Spinen\Halo;
 
-use Spinen\Halo\Support\Collection;
 use Spinen\Halo\Support\Model;
 
 /**
  * Class Outcome
  *
+ * @property array $access_control
+ * @property array $fields
  * @property bool $action_resets_response
  * @property bool $actionvisibility
  * @property bool $allow_user_attachments
@@ -59,8 +60,6 @@ use Spinen\Halo\Support\Model;
  * @property bool $translate_before_sending
  * @property bool $update_dynamic_email_list
  * @property bool $usetimer
- * @property Collection $access_control
- * @property Collection $fields
  * @property float $defaultmanhrs
  * @property float $defaultnonbill
  * @property int $access_control_level
@@ -144,7 +143,6 @@ class Outcome extends Model
      */
     protected $casts = [
         'access_control_level' => 'int',
-        'access_control' => 'collection',
         'action_resets_response' => 'bool',
         'actionvisibility' => 'bool',
         'ai_model' => 'string',
@@ -191,7 +189,6 @@ class Outcome extends Model
         'dontshowscreen' => 'bool',
         'emailtemplate_id' => 'int',
         'excludeFromDynamicLists' => 'bool',
-        'fields' => 'collection',
         'fieldvisible' => 'string',
         'follow' => 'bool',
         'followersccbcc' => 'int',
@@ -275,4 +272,11 @@ class Outcome extends Model
      * Path to API endpoint.
      */
     protected string $path = '/outcome';
+
+
+    /**
+     * Some of the responses have the data under a property
+     */
+    protected ?string $responseKey = 'invaild_to_stop_peeling';
+    // NOTE: This is a hack until we fix this in the Builder by making it smarter
 }

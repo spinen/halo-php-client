@@ -13,6 +13,7 @@ use Spinen\Halo\Agent;
 use Spinen\Halo\Appointment;
 use Spinen\Halo\Article;
 use Spinen\Halo\Asset;
+use Spinen\Halo\AssetType;
 use Spinen\Halo\Attachment;
 use Spinen\Halo\Client;
 use Spinen\Halo\Concerns\HasClient;
@@ -46,6 +47,7 @@ use Spinen\Halo\WebhookEvent;
  * @property Collection $appointments
  * @property Collection $articles
  * @property Collection $assets
+ * @property Collection $assets_types
  * @property Collection $attachments
  * @property Collection $clients
  * @property Collection $contracts
@@ -72,6 +74,7 @@ use Spinen\Halo\WebhookEvent;
  * @method self appointments()
  * @method self articles()
  * @method self assets()
+ * @method self assets_types()
  * @method self attachments()
  * @method self clients()
  * @method self contracts()
@@ -129,6 +132,7 @@ class Builder
         'appointments' => Appointment::class,
         'articles' => Article::class,
         'assets' => Asset::class,
+        'asset_types' => AssetType::class,
         'attachments' => Attachment::class,
         'clients' => Client::class,
         'contracts' => Contract::class,
@@ -454,6 +458,9 @@ class Builder
      */
     protected function peelWrapperPropertyIfNeeded(array $properties): array
     {
+        // TODO: This is causing an issue where some of the models have a
+        // key matching the name that is not a collection (i.e. outcome)
+
         // Check for single response
         if (array_key_exists(
             $this->getModel()
