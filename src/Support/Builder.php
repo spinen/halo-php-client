@@ -13,6 +13,7 @@ use Spinen\Halo\Agent;
 use Spinen\Halo\Appointment;
 use Spinen\Halo\Article;
 use Spinen\Halo\Asset;
+use Spinen\Halo\AssetType;
 use Spinen\Halo\Attachment;
 use Spinen\Halo\Client;
 use Spinen\Halo\Concerns\HasClient;
@@ -46,6 +47,7 @@ use Spinen\Halo\WebhookEvent;
  * @property Collection $appointments
  * @property Collection $articles
  * @property Collection $assets
+ * @property Collection $assets_types
  * @property Collection $attachments
  * @property Collection $clients
  * @property Collection $contracts
@@ -72,6 +74,7 @@ use Spinen\Halo\WebhookEvent;
  * @method self appointments()
  * @method self articles()
  * @method self assets()
+ * @method self assets_types()
  * @method self attachments()
  * @method self clients()
  * @method self contracts()
@@ -129,6 +132,7 @@ class Builder
         'appointments' => Appointment::class,
         'articles' => Article::class,
         'assets' => Asset::class,
+        'assets_types' => AssetType::class,
         'attachments' => Attachment::class,
         'clients' => Client::class,
         'contracts' => Contract::class,
