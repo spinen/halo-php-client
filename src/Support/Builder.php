@@ -458,6 +458,9 @@ class Builder
      */
     protected function peelWrapperPropertyIfNeeded(array $properties): array
     {
+        // TODO: This is causing an issue where some of the models have a
+        // key matching the name that is not a collection (i.e. outcome)
+
         // Check for single response
         if (array_key_exists(
             $this->getModel()
