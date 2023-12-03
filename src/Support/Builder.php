@@ -13,6 +13,7 @@ use Spinen\Halo\Agent;
 use Spinen\Halo\Appointment;
 use Spinen\Halo\Article;
 use Spinen\Halo\Asset;
+use Spinen\Halo\AssetType;
 use Spinen\Halo\Attachment;
 use Spinen\Halo\Client;
 use Spinen\Halo\Concerns\HasClient;
@@ -24,6 +25,7 @@ use Spinen\Halo\Exceptions\TokenException;
 use Spinen\Halo\Invoice;
 use Spinen\Halo\Item;
 use Spinen\Halo\Opportunity;
+use Spinen\Halo\Outcome;
 use Spinen\Halo\Project;
 use Spinen\Halo\Quote;
 use Spinen\Halo\Report;
@@ -45,6 +47,7 @@ use Spinen\Halo\WebhookEvent;
  * @property Collection $appointments
  * @property Collection $articles
  * @property Collection $assets
+ * @property Collection $assets_types
  * @property Collection $attachments
  * @property Collection $clients
  * @property Collection $contracts
@@ -71,12 +74,14 @@ use Spinen\Halo\WebhookEvent;
  * @method self appointments()
  * @method self articles()
  * @method self assets()
+ * @method self assets_types()
  * @method self attachments()
  * @method self clients()
  * @method self contracts()
  * @method self invoices()
  * @method self items()
  * @method self opportunities()
+ * @method self outcomes()
  * @method self projects()
  * @method self quotes()
  * @method self reports()
@@ -127,12 +132,14 @@ class Builder
         'appointments' => Appointment::class,
         'articles' => Article::class,
         'assets' => Asset::class,
+        'asset_types' => AssetType::class,
         'attachments' => Attachment::class,
         'clients' => Client::class,
         'contracts' => Contract::class,
         'invoices' => Invoice::class,
         'items' => Item::class,
         'opportunities' => Opportunity::class,
+        'outcomes' => Outcome::class,
         'projects' => Project::class,
         'quotes' => Quote::class,
         'reports' => Report::class,
@@ -233,21 +240,32 @@ class Builder
     public function get(array|string $properties = ['*'], ?string $extra = null): Collection|Model
     {
         $properties = Arr::wrap($properties);
+        $count = null;
+        $page = null;
+        $pageSize = null;
 
         // Call API to get the response
         $response = $this->getClient()
             ->setDebug($this->debug)
             ->request($this->getPath($extra));
 
-        // TODO: Should we capture record_count?
+        if (
+            array_key_exists('record_count', $response) &&
+            array_key_exists('page_no', $response) &&
+            array_key_exists('page_size', $response)
+        ) {
+            $count = $response['record_count'];
+            $page = $response['page_no'];
+            $pageSize = $response['page_size'];
+        }
 
         // Peel off the key if exist
         $response = $this->peelWrapperPropertyIfNeeded(Arr::wrap($response));
 
         // Convert to a collection of filtered objects casted to the class
-        return (new Collection((array_values($response) === $response) ? $response : [$response]))->map(
+        return (new Collection((array_values($response) === $response) ? $response : [$response]))
             // Cast to class with only the requested, properties
-            fn ($items) => $this->getModel()
+            ->map(fn ($items) => $this->getModel()
                 ->newFromBuilder(
                     $properties === ['*']
                         ? (array) $items
@@ -255,8 +273,8 @@ class Builder
                             ->only($properties)
                             ->toArray()
                 )
-                ->setClient($this->getClient()->setDebug(false))
-        );
+                ->setClient($this->getClient()->setDebug(false)))
+            ->setPagination(count: $count, page: $page, pageSize: $pageSize);
     }
 
     /**
@@ -284,8 +302,11 @@ class Builder
      */
     public function getPath(?string $extra = null): ?string
     {
+        $w = (array)$this->wheres;
+        $id = Arr::pull($w, $this->getModel()->getKeyName());
+
         return $this->getModel()
-            ->getPath($extra, $this->wheres);
+            ->getPath($extra . (is_null($id) ? null : '/' . $id), $w);
     }
 
     /**
@@ -426,8 +447,8 @@ class Builder
      */
     public function paginate(int|string|null $size = null): self
     {
-        return $this->where('pageinate', true)
-            ->when($size, fn (self $b): self => $b->where('page_size', (int) $size));
+        return $this->unless($size, fn (self $b): self => $b->where('pageinate', false))
+            ->when($size, fn (self $b): self => $b->where('pageinate', true)->where('page_size', (int) $size));
     }
 
     /**
@@ -437,6 +458,9 @@ class Builder
      */
     protected function peelWrapperPropertyIfNeeded(array $properties): array
     {
+        // TODO: This is causing an issue where some of the models have a
+        // key matching the name that is not a collection (i.e. outcome)
+
         // Check for single response
         if (array_key_exists(
             $this->getModel()
@@ -503,17 +527,9 @@ class Builder
      */
     public function where(string $property, $value = true): self
     {
-        $value = is_a($value, LaravelCollection::class) ? $value->toArray() : $value;
-
-        // If looking for a specific model, then set the id
-        if ($property === $this->getModel()->getKeyName()) {
-            // TODO: This is an issue when a model is "readonly" as you cannot set it
-            $this->getModel()->{$property} = $value;
-
-            return $this;
-        }
-
-        $this->wheres[$property] = $value;
+        $this->wheres[$property] = is_a($value, LaravelCollection::class)
+            ? $value->toArray()
+            : $value;
 
         return $this;
     }

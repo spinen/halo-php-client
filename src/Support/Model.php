@@ -405,7 +405,8 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
         $path = rtrim($this->path, '/');
 
         // If have an id, then put it on the end
-        if ($this->getKey()) {
+        // NOTE: Halo treats creates & updates the same, so only on existing
+        if ($this->exist && $this->getKey()) {
             $path .= '/'.$this->getKey();
         }
 
@@ -679,22 +680,8 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
                 return true;
             }
 
-            if ($this->exists) {
-                // TODO: If we get null from the PUT, throw/handle exception
-                $response = $this->getClient()
-                                 ->put($this->getPath(), $this->getDirty());
-
-                // Record the changes
-                $this->syncChanges();
-
-                // Reset the model with the results as we get back the full model
-                $this->setRawAttributes($response, true);
-
-                return true;
-            }
-
             $response = $this->getClient()
-                             ->post($this->getPath(), $this->toArray());
+                             ->post($this->getPath(), [$this->toArray()]);
 
             $this->exists = true;
 
