@@ -132,7 +132,7 @@ class Builder
         'appointments' => Appointment::class,
         'articles' => Article::class,
         'assets' => Asset::class,
-        'assets_types' => AssetType::class,
+        'asset_types' => AssetType::class,
         'attachments' => Attachment::class,
         'clients' => Client::class,
         'contracts' => Contract::class,
