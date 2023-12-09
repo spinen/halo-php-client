@@ -2,7 +2,6 @@
 
 namespace Spinen\Halo;
 
-use Spinen\Halo\Support\Collection;
 use Spinen\Halo\Support\Model;
 
 /**
