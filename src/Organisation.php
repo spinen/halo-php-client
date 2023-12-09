@@ -38,13 +38,8 @@ class Organisation extends Model
      * @var array
      */
     protected $casts = [
-        // 'address' => 'array',
         'allowall_tickettypes' => 'bool',
-        // 'allowed_tickettypes' => 'array',
-        // 'customfields' => 'array',
         'deliverysite' => 'int',
-        // 'departments' => 'array',
-        // 'faqlists' => 'array',
         'id' => 'int',
         'linked_client_id' => 'int',
         'messagegroup_id' => 'int',
