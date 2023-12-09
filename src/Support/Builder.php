@@ -310,11 +310,11 @@ class Builder
      */
     public function getPath(?string $extra = null): ?string
     {
-        $w = (array)$this->wheres;
+        $w = (array) $this->wheres;
         $id = Arr::pull($w, $this->getModel()->getKeyName());
 
         return $this->getModel()
-            ->getPath($extra . (is_null($id) ? null : '/' . $id), $w);
+            ->getPath($extra.(is_null($id) ? null : '/'.$id), $w);
     }
 
     /**

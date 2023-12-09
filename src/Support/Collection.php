@@ -6,10 +6,6 @@ use Illuminate\Support\Collection as BaseCollection;
 
 class Collection extends BaseCollection
 {
-    /**
-     *
-     * @var array
-     */
     protected array $pagination = [];
 
     /**
