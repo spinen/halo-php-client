@@ -56,6 +56,7 @@ use Spinen\Halo\WebhookEvent;
  * @property Collection $items
  * @property Collection $opportunities
  * @property Collection $organisations
+ * @property Collection $priorities
  * @property Collection $projects
  * @property Collection $quotes
  * @property Collection $reports
@@ -85,6 +86,7 @@ use Spinen\Halo\WebhookEvent;
  * @method self opportunities()
  * @method self organisations()
  * @method self outcomes()
+ * @method self priorities()
  * @method self projects()
  * @method self quotes()
  * @method self reports()
@@ -144,6 +146,7 @@ class Builder
         'opportunities' => Opportunity::class,
         'organisations' => Organisation::class,
         'outcomes' => Outcome::class,
+        'priorities' => Priority::class,
         'projects' => Project::class,
         'quotes' => Quote::class,
         'reports' => Report::class,
