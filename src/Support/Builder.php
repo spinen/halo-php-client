@@ -25,7 +25,9 @@ use Spinen\Halo\Exceptions\TokenException;
 use Spinen\Halo\Invoice;
 use Spinen\Halo\Item;
 use Spinen\Halo\Opportunity;
+use Spinen\Halo\Organisation;
 use Spinen\Halo\Outcome;
+use Spinen\Halo\Priority;
 use Spinen\Halo\Project;
 use Spinen\Halo\Quote;
 use Spinen\Halo\Report;
@@ -42,6 +44,7 @@ use Spinen\Halo\WebhookEvent;
 /**
  * Class Builder
  *
+ * @property Agent $agent
  * @property Collection $actions
  * @property Collection $agents
  * @property Collection $appointments
@@ -54,6 +57,8 @@ use Spinen\Halo\WebhookEvent;
  * @property Collection $invoices
  * @property Collection $items
  * @property Collection $opportunities
+ * @property Collection $organisations
+ * @property Collection $priorities
  * @property Collection $projects
  * @property Collection $quotes
  * @property Collection $reports
@@ -61,27 +66,28 @@ use Spinen\Halo\WebhookEvent;
  * @property Collection $statuses
  * @property Collection $suppliers
  * @property Collection $teams
- * @property Collection $tickets
  * @property Collection $ticket_types
+ * @property Collection $tickets
  * @property Collection $users
- * @property Collection $webhooks
  * @property Collection $webhook_events
- * @property Agent $agent
+ * @property Collection $webhooks
  * @property User $user
  *
  * @method self actions()
  * @method self agents()
  * @method self appointments()
  * @method self articles()
- * @method self assets()
  * @method self assets_types()
+ * @method self assets()
  * @method self attachments()
  * @method self clients()
  * @method self contracts()
  * @method self invoices()
  * @method self items()
  * @method self opportunities()
+ * @method self organisations()
  * @method self outcomes()
+ * @method self priorities()
  * @method self projects()
  * @method self quotes()
  * @method self reports()
@@ -131,15 +137,17 @@ class Builder
         'agents' => Agent::class,
         'appointments' => Appointment::class,
         'articles' => Article::class,
-        'assets' => Asset::class,
         'asset_types' => AssetType::class,
+        'assets' => Asset::class,
         'attachments' => Attachment::class,
         'clients' => Client::class,
         'contracts' => Contract::class,
         'invoices' => Invoice::class,
         'items' => Item::class,
         'opportunities' => Opportunity::class,
+        'organisations' => Organisation::class,
         'outcomes' => Outcome::class,
+        'priorities' => Priority::class,
         'projects' => Project::class,
         'quotes' => Quote::class,
         'reports' => Report::class,
@@ -147,11 +155,11 @@ class Builder
         'statuses' => Status::class,
         'suppliers' => Supplier::class,
         'teams' => Team::class,
-        'tickets' => Ticket::class,
         'ticket_types' => TicketType::class,
+        'tickets' => Ticket::class,
         'users' => User::class,
-        'webhooks' => Webhook::class,
         'webhook_events' => WebhookEvent::class,
+        'webhooks' => Webhook::class,
     ];
 
     /**
@@ -302,11 +310,11 @@ class Builder
      */
     public function getPath(?string $extra = null): ?string
     {
-        $w = (array)$this->wheres;
+        $w = (array) $this->wheres;
         $id = Arr::pull($w, $this->getModel()->getKeyName());
 
         return $this->getModel()
-            ->getPath($extra . (is_null($id) ? null : '/' . $id), $w);
+            ->getPath($extra.(is_null($id) ? null : '/'.$id), $w);
     }
 
     /**

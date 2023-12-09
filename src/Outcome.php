@@ -273,7 +273,6 @@ class Outcome extends Model
      */
     protected string $path = '/outcome';
 
-
     /**
      * Some of the responses have the data under a property
      */
