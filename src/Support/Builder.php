@@ -25,6 +25,7 @@ use Spinen\Halo\Exceptions\TokenException;
 use Spinen\Halo\Invoice;
 use Spinen\Halo\Item;
 use Spinen\Halo\Opportunity;
+use Spinen\Halo\Organisation;
 use Spinen\Halo\Outcome;
 use Spinen\Halo\Project;
 use Spinen\Halo\Quote;
@@ -54,6 +55,7 @@ use Spinen\Halo\WebhookEvent;
  * @property Collection $invoices
  * @property Collection $items
  * @property Collection $opportunities
+ * @property Collection $organisations
  * @property Collection $projects
  * @property Collection $quotes
  * @property Collection $reports
@@ -81,6 +83,7 @@ use Spinen\Halo\WebhookEvent;
  * @method self invoices()
  * @method self items()
  * @method self opportunities()
+ * @method self organisations()
  * @method self outcomes()
  * @method self projects()
  * @method self quotes()
@@ -139,6 +142,7 @@ class Builder
         'invoices' => Invoice::class,
         'items' => Item::class,
         'opportunities' => Opportunity::class,
+        'organisations' => Organisation::class,
         'outcomes' => Outcome::class,
         'projects' => Project::class,
         'quotes' => Quote::class,
