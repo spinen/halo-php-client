@@ -27,6 +27,7 @@ use Spinen\Halo\Item;
 use Spinen\Halo\Opportunity;
 use Spinen\Halo\Organisation;
 use Spinen\Halo\Outcome;
+use Spinen\Halo\Priority;
 use Spinen\Halo\Project;
 use Spinen\Halo\Quote;
 use Spinen\Halo\Report;
@@ -43,6 +44,7 @@ use Spinen\Halo\WebhookEvent;
 /**
  * Class Builder
  *
+ * @property Agent $agent
  * @property Collection $actions
  * @property Collection $agents
  * @property Collection $appointments
@@ -64,20 +66,19 @@ use Spinen\Halo\WebhookEvent;
  * @property Collection $statuses
  * @property Collection $suppliers
  * @property Collection $teams
- * @property Collection $tickets
  * @property Collection $ticket_types
+ * @property Collection $tickets
  * @property Collection $users
- * @property Collection $webhooks
  * @property Collection $webhook_events
- * @property Agent $agent
+ * @property Collection $webhooks
  * @property User $user
  *
  * @method self actions()
  * @method self agents()
  * @method self appointments()
  * @method self articles()
- * @method self assets()
  * @method self assets_types()
+ * @method self assets()
  * @method self attachments()
  * @method self clients()
  * @method self contracts()
@@ -136,8 +137,8 @@ class Builder
         'agents' => Agent::class,
         'appointments' => Appointment::class,
         'articles' => Article::class,
-        'assets' => Asset::class,
         'asset_types' => AssetType::class,
+        'assets' => Asset::class,
         'attachments' => Attachment::class,
         'clients' => Client::class,
         'contracts' => Contract::class,
@@ -154,11 +155,11 @@ class Builder
         'statuses' => Status::class,
         'suppliers' => Supplier::class,
         'teams' => Team::class,
-        'tickets' => Ticket::class,
         'ticket_types' => TicketType::class,
+        'tickets' => Ticket::class,
         'users' => User::class,
-        'webhooks' => Webhook::class,
         'webhook_events' => WebhookEvent::class,
+        'webhooks' => Webhook::class,
     ];
 
     /**
