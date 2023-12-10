@@ -41,6 +41,7 @@ use Spinen\Halo\TicketType;
 use Spinen\Halo\User;
 use Spinen\Halo\Webhook;
 use Spinen\Halo\WebhookEvent;
+use Spinen\Halo\Workday;
 
 /**
  * Class Builder
@@ -73,6 +74,7 @@ use Spinen\Halo\WebhookEvent;
  * @property Collection $users
  * @property Collection $webhook_events
  * @property Collection $webhooks
+ * @property Collection $workdays
  * @property User $user
  *
  * @method self actions()
@@ -104,6 +106,7 @@ use Spinen\Halo\WebhookEvent;
  * @method self users()
  * @method self webhook_events()
  * @method self webhooks()
+ * @method self workdays()
  */
 class Builder
 {
@@ -164,6 +167,7 @@ class Builder
         'users' => User::class,
         'webhook_events' => WebhookEvent::class,
         'webhooks' => Webhook::class,
+        'workdays' => Workday::class,
     ];
 
     /**
