@@ -76,6 +76,7 @@ use Spinen\Halo\Workday;
  * @property Collection $webhooks
  * @property Collection $workdays
  * @property User $user
+ * @property Client $client
  *
  * @method self actions()
  * @method self agents()
@@ -209,6 +210,9 @@ class Builder
     {
         return match (true) {
             $name === 'agent' => $this->newInstanceForModel(Agent::class)
+                ->get(extra: 'me')
+                ->first(),
+            $name === 'client' => $this->newInstanceForModel(Client::class)
                 ->get(extra: 'me')
                 ->first(),
             $name === 'user' => $this->newInstanceForModel(User::class)
