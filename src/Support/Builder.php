@@ -32,6 +32,7 @@ use Spinen\Halo\Project;
 use Spinen\Halo\Quote;
 use Spinen\Halo\Report;
 use Spinen\Halo\Site;
+use Spinen\Halo\Sla;
 use Spinen\Halo\Status;
 use Spinen\Halo\Supplier;
 use Spinen\Halo\Team;
@@ -40,6 +41,7 @@ use Spinen\Halo\TicketType;
 use Spinen\Halo\User;
 use Spinen\Halo\Webhook;
 use Spinen\Halo\WebhookEvent;
+use Spinen\Halo\Workday;
 
 /**
  * Class Builder
@@ -63,6 +65,7 @@ use Spinen\Halo\WebhookEvent;
  * @property Collection $quotes
  * @property Collection $reports
  * @property Collection $sites
+ * @property Collection $slas
  * @property Collection $statuses
  * @property Collection $suppliers
  * @property Collection $teams
@@ -71,7 +74,9 @@ use Spinen\Halo\WebhookEvent;
  * @property Collection $users
  * @property Collection $webhook_events
  * @property Collection $webhooks
+ * @property Collection $workdays
  * @property User $user
+ * @property Client $client
  *
  * @method self actions()
  * @method self agents()
@@ -93,6 +98,7 @@ use Spinen\Halo\WebhookEvent;
  * @method self reports()
  * @method self search($for)
  * @method self sites()
+ * @method self slas()
  * @method self statuses()
  * @method self suppliers()
  * @method self teams()
@@ -101,6 +107,7 @@ use Spinen\Halo\WebhookEvent;
  * @method self users()
  * @method self webhook_events()
  * @method self webhooks()
+ * @method self workdays()
  */
 class Builder
 {
@@ -152,6 +159,7 @@ class Builder
         'quotes' => Quote::class,
         'reports' => Report::class,
         'sites' => Site::class,
+        'slas' => Sla::class,
         'statuses' => Status::class,
         'suppliers' => Supplier::class,
         'teams' => Team::class,
@@ -160,6 +168,7 @@ class Builder
         'users' => User::class,
         'webhook_events' => WebhookEvent::class,
         'webhooks' => Webhook::class,
+        'workdays' => Workday::class,
     ];
 
     /**
@@ -201,6 +210,9 @@ class Builder
     {
         return match (true) {
             $name === 'agent' => $this->newInstanceForModel(Agent::class)
+                ->get(extra: 'me')
+                ->first(),
+            $name === 'client' => $this->newInstanceForModel(Client::class)
                 ->get(extra: 'me')
                 ->first(),
             $name === 'user' => $this->newInstanceForModel(User::class)
