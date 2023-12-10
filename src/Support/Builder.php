@@ -32,6 +32,7 @@ use Spinen\Halo\Project;
 use Spinen\Halo\Quote;
 use Spinen\Halo\Report;
 use Spinen\Halo\Site;
+use Spinen\Halo\Sla;
 use Spinen\Halo\Status;
 use Spinen\Halo\Supplier;
 use Spinen\Halo\Team;
@@ -63,6 +64,7 @@ use Spinen\Halo\WebhookEvent;
  * @property Collection $quotes
  * @property Collection $reports
  * @property Collection $sites
+ * @property Collection $slas
  * @property Collection $statuses
  * @property Collection $suppliers
  * @property Collection $teams
@@ -93,6 +95,7 @@ use Spinen\Halo\WebhookEvent;
  * @method self reports()
  * @method self search($for)
  * @method self sites()
+ * @method self slas()
  * @method self statuses()
  * @method self suppliers()
  * @method self teams()
@@ -152,6 +155,7 @@ class Builder
         'quotes' => Quote::class,
         'reports' => Report::class,
         'sites' => Site::class,
+        'slas' => Sla::class,
         'statuses' => Status::class,
         'suppliers' => Supplier::class,
         'teams' => Team::class,
