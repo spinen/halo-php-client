@@ -545,11 +545,21 @@ class Builder
      *
      * @throws InvalidRelationshipException
      */
-    public function where(string $property, $value = true): self
+    public function where(iterable|string $property, $value = true): self
     {
-        $this->wheres[$property] = is_a($value, LaravelCollection::class)
-            ? $value->toArray()
-            : $value;
+        is_iterable($property)
+            // Given multiple properties to set, so recursively call self
+            ? Collection::wrap($property)->each(
+                fn ($v, string $p): self => is_numeric($p)
+                    // No value given, so use default value
+                    ? $this->where($v, $value)
+                    // Pass property & value
+                    : $this->where($p, $v),
+            )
+            // Given single property
+            : $this->wheres[$property] = is_a($value, LaravelCollection::class)
+                ? $value->toArray()
+                : $value;
 
         return $this;
     }
