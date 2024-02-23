@@ -52,7 +52,7 @@ use Spinen\Halo\Workday;
  * @property Collection $appointments
  * @property Collection $articles
  * @property Collection $assets
- * @property Collection $assets_types
+ * @property Collection $asset_types
  * @property Collection $attachments
  * @property Collection $clients
  * @property Collection $contracts
@@ -82,7 +82,7 @@ use Spinen\Halo\Workday;
  * @method self agents()
  * @method self appointments()
  * @method self articles()
- * @method self assets_types()
+ * @method self asset_types()
  * @method self assets()
  * @method self attachments()
  * @method self clients()
