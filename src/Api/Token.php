@@ -85,6 +85,6 @@ class Token
     {
         return is_null($this->access_token) || Carbon::now()->gte($this->expires_at)
             ? 0
-            : $this->expires_at?->diffInSeconds();
+            : (int) floor(abs(Carbon::now()->diffInSeconds($this->expires_at)));
     }
 }
