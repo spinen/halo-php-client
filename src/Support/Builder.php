@@ -33,6 +33,7 @@ use Spinen\Halo\Quote;
 use Spinen\Halo\Report;
 use Spinen\Halo\Site;
 use Spinen\Halo\Sla;
+use Spinen\Halo\SoftwareLicence;
 use Spinen\Halo\Status;
 use Spinen\Halo\Supplier;
 use Spinen\Halo\Team;
@@ -67,6 +68,7 @@ use Spinen\Halo\Workday;
  * @property Collection<int, Report> $reports
  * @property Collection<int, Site> $sites
  * @property Collection<int, Sla> $slas
+ * @property Collection<int, SoftwareLicence> $software_licences
  * @property Collection<int, Status> $statuses
  * @property Collection<int, Supplier> $suppliers
  * @property Collection<int, Team> $teams
@@ -99,6 +101,7 @@ use Spinen\Halo\Workday;
  * @method self search($for)
  * @method self sites()
  * @method self slas()
+ * @method self software_licences()
  * @method self statuses()
  * @method self suppliers()
  * @method self teams()
@@ -160,6 +163,7 @@ class Builder
         'reports' => Report::class,
         'sites' => Site::class,
         'slas' => Sla::class,
+        'software_licences' => SoftwareLicence::class,
         'statuses' => Status::class,
         'suppliers' => Supplier::class,
         'teams' => Team::class,
