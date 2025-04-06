@@ -309,7 +309,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
 
         try {
             $this->getClient()
-                 ->delete($this->getPath());
+                 ->delete($this->getPath($this->getKey()));
 
             return true;
         } catch (GuzzleException $e) {
