@@ -568,6 +568,9 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
     {
         $model = $this->newInstance([], true);
 
+        // TODO: Should we add a way to transform values?
+        //       (i.e. SoftwareLicence gives 1899-12-30 00:00:00 for null date)
+
         $model->setRawAttributes((array) $attributes, true);
 
         return $model;
