@@ -254,6 +254,19 @@ class Builder
     }
 
     /**
+     * Delete specific instance of class
+     *
+     * @throws NoClientException
+     * @throws TokenException
+     */
+    public function delete(int|string $id): bool
+    {
+        //  TODO: Consider allowing $id to be null & deleting all
+        return $this->make([$this->getModel()->getKeyName() => $id])
+                    ->delete();
+    }
+
+    /**
      * Get Collection of class instances that match query
      *
      * @throws GuzzleException
