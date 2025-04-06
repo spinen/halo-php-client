@@ -47,36 +47,36 @@ use Spinen\Halo\Workday;
  * Class Builder
  *
  * @property Agent $agent
- * @property Collection $actions
- * @property Collection $agents
- * @property Collection $appointments
- * @property Collection $articles
- * @property Collection $assets
- * @property Collection $asset_types
- * @property Collection $attachments
- * @property Collection $clients
- * @property Collection $contracts
- * @property Collection $invoices
- * @property Collection $items
- * @property Collection $opportunities
- * @property Collection $organisations
- * @property Collection $priorities
- * @property Collection $projects
- * @property Collection $quotes
- * @property Collection $reports
- * @property Collection $sites
- * @property Collection $slas
- * @property Collection $statuses
- * @property Collection $suppliers
- * @property Collection $teams
- * @property Collection $ticket_types
- * @property Collection $tickets
- * @property Collection $users
- * @property Collection $webhook_events
- * @property Collection $webhooks
- * @property Collection $workdays
- * @property User $user
  * @property Client $client
+ * @property Collection<int, Action> $actions
+ * @property Collection<int, Agent> $agents
+ * @property Collection<int, Appointment> $appointments
+ * @property Collection<int, Article> $articles
+ * @property Collection<int, AssetType> $asset_types
+ * @property Collection<int, Asset> $assets
+ * @property Collection<int, Attachment> $attachments
+ * @property Collection<int, Client> $clients
+ * @property Collection<int, Contract> $contracts
+ * @property Collection<int, Invoice> $invoices
+ * @property Collection<int, Item> $items
+ * @property Collection<int, Opportunity> $opportunities
+ * @property Collection<int, Organisation> $organisations
+ * @property Collection<int, Priority> $priorities
+ * @property Collection<int, Project> $projects
+ * @property Collection<int, Quote> $quotes
+ * @property Collection<int, Report> $reports
+ * @property Collection<int, Site> $sites
+ * @property Collection<int, Sla> $slas
+ * @property Collection<int, Status> $statuses
+ * @property Collection<int, Supplier> $suppliers
+ * @property Collection<int, Team> $teams
+ * @property Collection<int, TicketType> $ticket_types
+ * @property Collection<int, Ticket> $tickets
+ * @property Collection<int, User> $users
+ * @property Collection<int, WebhookEvent> $webhook_events
+ * @property Collection<int, Webhook> $webhooks
+ * @property Collection<int, Workday> $workdays
+ * @property User $user
  *
  * @method self actions()
  * @method self agents()
