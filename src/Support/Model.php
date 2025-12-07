@@ -416,7 +416,9 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
         }
 
         if (! empty($query = $this->getDefaultWheres($query))) {
-            $path .= '?'.http_build_query($this->convertBoolToString($query));
+            // NOTE: Halo does not accept the index in array of properties, so removing them
+            //       ?priority%5B0%5D=4&priority%5B1%5D=3 becomes priority=4&priority=3
+            $path .= '?'.preg_replace('/%5B\d+%5D=/', '=', http_build_query($this->convertBoolToString($query)));
         }
 
         // If there is a parentModel & not have an id (unless for nested), then prepend parentModel
