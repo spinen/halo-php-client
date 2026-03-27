@@ -418,6 +418,7 @@ class ModelTest extends TestCase
         $this->assertEquals('some/path', $this->model->getPath(), 'simple');
 
         $this->model->id = 1;
+        $this->model->exists = true;
 
         $this->assertEquals('some/path/1', $this->model->getPath(), 'specific id');
 
