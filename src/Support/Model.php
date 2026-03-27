@@ -411,7 +411,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
         }
 
         // Stick any extra things on the end
-        if (! is_null($extra)) {
+        if (! empty($extra)) {
             $path .= '/'.ltrim($extra, '/');
         }
 
