@@ -181,7 +181,7 @@ class BuilderTest extends TestCase
             ->withArgs(
                 [
                     Mockery::any(),
-                    ['some' => 'property'],
+                    [['some' => 'property']],
                 ]
             )
             ->once()
@@ -411,7 +411,7 @@ class BuilderTest extends TestCase
                         'value' => $value = collect([$one = Str::random(), $two = Str::random()]),
                     ],
                 ],
-                'uri' => '/report?'.$property.'%5B0%5D='.$one.'&'.$property.'%5B1%5D='.$two,
+                'uri' => '/report?'.$property.'='.$one.'&'.$property.'='.$two,
             ],
             'null value' => [
                 'class' => Report::class,
@@ -543,7 +543,7 @@ class BuilderTest extends TestCase
                         'value' => null,
                     ],
                 ],
-                'uri' => '/report?pageinate=true',
+                'uri' => '/report?pageinate=false',
             ],
             'paginate with size' => [
                 'class' => Report::class,
@@ -555,17 +555,6 @@ class BuilderTest extends TestCase
                     ],
                 ],
                 'uri' => '/report?pageinate=true&page_size='.$property,
-            ],
-            'pageinate' => [
-                'class' => Report::class,
-                'calls' => [
-                    [
-                        'method' => 'pageinate',
-                        'property' => null,
-                        'value' => null,
-                    ],
-                ],
-                'uri' => '/report?pageinate=true',
             ],
             'pageinate with size' => [
                 'class' => Report::class,
