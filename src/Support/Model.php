@@ -406,12 +406,12 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
 
         // If have an id, then put it on the end
         // NOTE: Halo treats creates & updates the same, so only on existing
-        if ($this->exist && $this->getKey()) {
+        if ($this->exists && $this->getKey()) {
             $path .= '/'.$this->getKey();
         }
 
         // Stick any extra things on the end
-        if (! is_null($extra)) {
+        if (! empty($extra)) {
             $path .= '/'.ltrim($extra, '/');
         }
 

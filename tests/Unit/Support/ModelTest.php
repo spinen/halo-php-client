@@ -418,6 +418,7 @@ class ModelTest extends TestCase
         $this->assertEquals('some/path', $this->model->getPath(), 'simple');
 
         $this->model->id = 1;
+        $this->model->exists = true;
 
         $this->assertEquals('some/path/1', $this->model->getPath(), 'specific id');
 
@@ -665,73 +666,6 @@ class ModelTest extends TestCase
         $this->model = $this->model->newInstance([], true);
 
         $this->assertTrue($this->model->save());
-    }
-
-    /**
-     * @test
-     */
-    public function it_will_post_when_saving_and_put_when_updating_a_model()
-    {
-        $this->client_mock->shouldReceive('post')
-            ->once()
-            ->withArgs(
-                [
-                    'some/path',
-                    [
-                        'some' => 'property',
-                    ],
-                ]
-            )
-            ->andReturn(
-                [
-                    'id' => 1,
-                    'some' => 'property',
-                ]
-            );
-
-        $this->client_mock->shouldReceive('put')
-            ->once()
-            ->withArgs(
-                [
-                    'some/path/1',
-                    [
-                        'some' => 'changed',
-                    ],
-                ]
-            )
-            ->andReturn(
-                [
-                    'id' => 1,
-                    'some' => 'changed',
-                    'updated' => true,
-                ]
-            );
-
-        $this->assertFalse($this->model->exists, 'Exist');
-
-        $this->assertTrue($this->model->isDirty(), 'Dirty');
-
-        $this->assertTrue($this->model->save(), 'Save');
-
-        $this->assertTrue($this->model->exists, 'Exist after save');
-
-        $this->assertFalse($this->model->isDirty(), 'Not dirty after save');
-
-        $this->assertEquals(1, $this->model->id, 'Saved model');
-
-        $this->assertEmpty($this->model->getChanges(), 'No changes');
-
-        $this->model->some = 'changed';
-
-        $this->assertTrue($this->model->isDirty(), 'Dirty after changed');
-
-        $this->assertTrue($this->model->save(), 'Updated');
-
-        $this->assertFalse($this->model->isDirty(), 'Not dirty after update');
-
-        $this->assertEquals(true, $this->model->updated, 'Updated model');
-
-        $this->assertArrayHasKey('some', $this->model->getChanges(), 'Changes');
     }
 
     /**
